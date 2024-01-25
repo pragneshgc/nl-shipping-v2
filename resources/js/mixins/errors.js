@@ -4,7 +4,6 @@ const reportError = (error) => {
 
   Swal.fire({
     position: 'bottom',
-    type: 'error',
     icon: 'error',
     title: 'Error fetching data!',
     showConfirmButton: false,
@@ -22,7 +21,6 @@ const postError = (error) => {
 
   Swal.fire({
     position: 'bottom',
-    type: 'error',
     icon: 'error',
     title: 'Whoops!',
     showConfirmButton: false,
@@ -39,7 +37,6 @@ const postErrorPopup = (error) => {
   audio.play();
 
   Swal.fire({
-    type: 'error',
     icon: 'error',
     title: 'Whoops!',
     showConfirmButton: false,
@@ -53,7 +50,6 @@ const postErrorPopup = (error) => {
 const postSuccess = (response) => {
   Swal.fire({
     position: 'bottom',
-    type: 'success',
     icon: 'success',
     title: 'Success!',
     showConfirmButton: false,
@@ -85,10 +81,55 @@ const reportErrorToast = function (error) {
   )
 }
 
+const postErrorToast = (error) => {
+  let audio = new Audio('/audio/alarm.mp3');
+  audio.play();
+
+  toast.show(error,
+    {
+      type: 'error',
+      iconPack: 'fontawesome',
+      icon: 'exclamation',
+      duration: 5000,
+      position: "top-right",
+      action: {
+        text: 'Dismiss',
+        onClick: (e, toastObject) => {
+          toastObject.goAway(0);
+        }
+      },
+    }
+  )
+}
+
+const postSuccessToast = (response) => {
+  if (response == '') {
+    response = 'Success!'
+  }
+
+  toast.show(response,
+    {
+      iconPack: 'fontawesome',
+      type: 'success',
+      icon: 'check',
+      duration: 2000,
+      position: "top-right",
+      action: {
+        text: 'Dismiss',
+        onClick: (e, toastObject) => {
+          toastObject.goAway(0);
+        }
+      },
+    }
+  )
+}
+
 export {
   reportError,
   postError,
   postErrorPopup,
   postSuccess,
-  reportErrorToast
+  reportErrorToast,
+  postErrorToast,
+  postSuccessToast
 }

@@ -57,10 +57,6 @@
                 </div>
             </section>
 
-            <section>
-                <button @click="showAlert">Hello world</button>
-            </section>
-
             <section v-if="orderDetails">
                 <div class="orderDetails">
                     {{ orderDetails }}
@@ -72,13 +68,7 @@
 <script setup>
 import { onMounted, reactive, ref } from 'vue';
 import router from '../router';
-import {
-    reportError,
-    postError,
-    postErrorPopup,
-    postSuccess,
-    reportErrorToast
-} from '../mixins/errors';
+import { postError } from '../mixins/errors';
 
 const statistics = reactive({ processing: 0, ready: 0, import: 0, dpd: 0, ups: 0, dhl: 0, rml: 0, shipped: 0, total: 0 });
 const loaded = ref(false);
@@ -109,12 +99,7 @@ const getStatistics = () => {
             loaded.value = true;
         })
         .catch((error) => {
-            //this.postError(error.response.data.message);
+            postError(error.response.data.message);
         })
-}
-
-const showAlert = () => {
-    // Use sweetalert2
-    reportErrorToast('Hello Vue world!!!');
 }
 </script>
