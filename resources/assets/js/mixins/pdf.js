@@ -1,9 +1,7 @@
 import jsPDF from 'jspdf'
 
-export default {
-  methods: {
-    exportPDF: function (element) {
-      let pdfName = 'export'+(Date.now() / 1000);
+const exportPDF = (element) => {
+  let pdfName = 'export'+(Date.now() / 1000);
       let doc = new jsPDF('l', 'mm', 'a1');
       doc.setFontSize(18);
 
@@ -32,6 +30,6 @@ export default {
       }
 
       doc.save(pdfName + '.pdf');
-    }
-  }
 }
+
+export{ exportPDF }
