@@ -1,5 +1,4 @@
 import Dashboard from '../pages/Dashboard.vue';
-
 import { canUserAccessModule } from "../helpers";
 
 const routes = [
