@@ -161,11 +161,14 @@
 </template>
 
 <script>
+import mitt from 'mitt';    
 import { ref, watch, onMounted, onBeforeUnmount } from 'vue';
 import { printUrl, printHtml, printFile, printLabel, printPage, printChart, printImages, printHTML } from '../mixins/print';
 import { exportPDF } from '../mixins/pdf';
 import { reportError, postError, postErrorPopup, postSuccess, reportErrorToast } from '../mixins/errors';
 import { exportCSV, arrayToCSV } from '../mixins/csv';
+
+const emitter = mitt();
 
 export default {
   props: [
@@ -236,15 +239,15 @@ export default {
     );
 
     onMounted(() => {
-      props.$root.$on('table.check.all', checkAll);
-      props.$root.$on('table.refresh', getData);
-      props.$root.$on('table.uncheck.all', uncheckAll);
+      emitter.on('table.check.all', checkAll);
+      emitter.on('table.refresh', getData);
+      emitter.on('table.uncheck.all', uncheckAll);
     });
 
     onBeforeUnmount(() => {
-      props.$root.$off('table.check.all');
-      props.$root.$off('table.uncheck.all');
-      props.$root.$off('table.refresh');
+      emitter.off('table.check.all');
+      emitter.off('table.uncheck.all');
+      emitter.off('table.refresh');
     });
 
     const changePage = (page) => {

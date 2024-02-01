@@ -144,7 +144,7 @@ export default {
 
     const getData = () => {
       loading.value = true;      
-
+      console.log("start");
       axios
         .get(
           	props.dataUrl +
@@ -158,12 +158,13 @@ export default {
         .then((response) => {          
           data.value = response.data.data;
           loading.value = false;
-
+          console.log("then");
           let visible = data.value.map(function (item) {
             return item[Object.keys(item)[0]];
           });
         })
         .catch((error) => {
+          console.log("error");
           console.error(error);
         });
     };
