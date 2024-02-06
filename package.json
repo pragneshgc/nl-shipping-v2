@@ -8,6 +8,7 @@
     "@hoppscotch/vue-toasted": "^0.1.0",
     "@vitejs/plugin-vue": "^5.0.3",
     "@vue/compat": "^3.4.15",
+    "@vuesimple/vs-datepicker": "^3.0.5",
     "axios": "^1.6.5",
     "laravel-vite-plugin": "^1.0.1",
     "lodash": "^4.17.21",
@@ -18,9 +19,9 @@
   },
   "dependencies": {
     "jspdf": "^2.5.1",
+    "mitt": "^3.0.1",
     "vue": "^3.4.15",
-    "vue-loader": "^17.3.1",
-    "vuejs3-datepicker": "^1.1.2"
+    "vue-loader": "^17.3.1"
   },
   "type": "module"
 }

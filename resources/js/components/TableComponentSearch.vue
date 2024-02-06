@@ -5,13 +5,17 @@
         </transition>
 
         <div class="card">
-            <div class="">
+            <div>
                 <div class="row search-boxes">
                     <div v-for="(filter, index) in filters" :key="index" class="filter-inputs">
+                        <!-- {{ filter.title }} -->
                         <input v-model="selectedFilters[filter.value]" v-if="filter.type == 'text'"
                             class="form-control tBoxSize02" :placeholder="filter.title" />
-                        <datepicker v-else-if="filter.type == 'date'" :placeholder="filter.title" :name="filter.value"
-                            v-model="selectedFilters[filter.value]" maxlength="30"></datepicker>
+                        <template v-else-if="filter.type == 'date'">
+                            <VsDatepicker :placeholder="filter.title" :name="filter.value" label=""
+                                v-model="selectedFilters[filter.value]" maxlength="30" format="DD MMM YYYY">
+                            </VsDatepicker>
+                        </template>
                         <select class="table-dropdown" v-else-if="filter.type == 'select'" :name="filter.value"
                             v-model="selectedFilters[filter.value]">
                             <option v-for="(option, index) in filter.options" :key="index" :value="option.value">
@@ -56,16 +60,21 @@
                 <slot> </slot>
             </div>
 
+            <!-- Card Content -->
             <div class="card-body">
-                <table style="table-layout: auto" v-show="data.length >= 1" class="table table-hover">
+                <table style="table-layout: auto" v-show="data.data.length >= 1" class="table table-hover">
+                    <!-- Table head -->
                     <thead class="primary-color text-white">
                         <tr>
-                            <th v-if="checkboxVisible"
-                                style="width: 40px;font-weight: 400;padding: 16px 8px;vertical-align: top;"></th>
-                            <th class="clickable" v-for="(value, key) in data[0]"
-                                v-if="typeof hiddenColumns != 'undefined' ? !hiddenColumns.includes(key) : true"
-                                v-on:click="setOrder(key)">
-                                {{ translate(key) }}
+                            <th v-if="checkboxVisible" style="
+                  width: 40px;
+                  font-weight: 400;
+                  padding: 16px 8px;
+                  vertical-align: top;
+                "></th>
+                            <th class="clickable" v-for="(value, key) in tableHeads" v-on:click="setOrder(key)">
+                                {{ value }}
+
                                 <i v-if="key == orderBy && orderDirection == 'DESC'" class="fa fa-caret-down"></i>
                                 <i v-if="key == orderBy && orderDirection == 'ASC'" class="fa fa-caret-up"></i>
                                 <i v-if="key != orderBy" class="fa fa-sort"></i>
@@ -73,17 +82,23 @@
                             <th style="width: 50px"></th>
                         </tr>
                     </thead>
+                    <!-- Table head -->
 
+                    <!-- Table body -->
+                    <!--<transition-group tag="tbody" name="table-row">-->
                     <tbody>
+                        <!--@dblclick="redirect(item[redirectId])"   -->
                         <tr class="clickable" @dblclick="redirect(item[redirectId])" v-for="item in data.data"
                             :key="item[Object.keys(item)[0]]">
                             <td v-if="checkboxVisible">
+                                <!-- <label class="checkboxElement"> -->
                                 <input :name="item[Object.keys(item)[0]]" type="checkbox"
                                     :checked="checked.includes(item[Object.keys(item)[0]])" />
                                 <label :for="item[Object.keys(item)[0]]" @click="check(item)"></label>
+                                <!-- <span class="checkmark"></span>  -->
+                                <!-- </label> -->
                             </td>
-                            <td v-for="(value, key) in item"
-                                v-if="typeof hiddenColumns != 'undefined' ? !hiddenColumns.includes(key) : true">
+                            <td v-for="(value, key) in item">
                                 <span v-if="typeof value == 'string'" v-html="value"></span>
                                 <ul v-else-if="typeof value == 'object'">
                                     <li v-for="obj in value" v-html="obj"></li>
@@ -97,116 +112,101 @@
                             </td>
                         </tr>
                     </tbody>
+                    <!--</transition-group>-->
+                    <!-- Table body -->
                 </table>
-                <div v-show="data.length <= 0">No data found!</div>
+                <div v-show="data.data.length <= 0">No data found!</div>
             </div>
+            <!-- /Card Content -->
 
             <div class="card-footer">
                 <div class="paginator pagination example" v-show="data.to > 1">
-                    <!-- Pagination code remains unchanged -->
+                    <ul class="pagination pg-blue">
+                        <li class="page-item" v-bind:class="{ disabled: data.current_page == 1 }"
+                            v-on:click="changePage(data.current_page - 1)">
+                            <a class="page-link" aria-label="Previous">
+                                <span aria-hidden="true">&laquo;</span>
+                                <span class="sr-only">Previous</span>
+                            </a>
+                        </li>
+                        <li class="page-item" v-bind:class="{ active: data.current_page == 1 }" v-on:click="changePage(1)">
+                            1
+                        </li>
+                        <li class="page-item" v-if="data.current_page - 1 != 1 && data.current_page != 1"
+                            v-on:click="changePage(data.current_page - 1)">
+                            {{ data.current_page - 1 }}
+                        </li>
+                        <li class="active page-item" v-if="data.current_page != 1">
+                            {{ data.current_page }}
+                        </li>
+                        <li class="page-item" v-if="data.current_page + 1 != data.last_page &&
+                            data.current_page != data.last_page
+                            " v-on:click="changePage(data.current_page + 1)">
+                            {{ data.current_page + 1 }}
+                        </li>
+                        <li class="page-item" v-if="data.current_page != data.last_page"
+                            v-on:click="changePage(data.last_page)">
+                            {{ data.last_page }}
+                        </li>
+                        <li class="page-item" v-bind:class="{ disabled: data.current_page == data.last_page }"
+                            v-on:click="changePage(data.current_page + 1)">
+                            <a class="page-link" aria-label="Next">
+                                <span aria-hidden="true">&raquo;</span>
+                                <span class="sr-only">Next</span>
+                            </a>
+                        </li>
+                    </ul>
                 </div>
                 <div class="paginatorInfo" v-if="data.total > 1">
                     Showing {{ data.from }} to {{ data.to }} of {{ data.total }}
                 </div>
             </div>
+
         </div>
     </div>
 </template>
+<script setup>
+import VsDatepicker from '@vuesimple/vs-datepicker';
+import { useTable } from '../composables/useTable';
+import { ref } from 'vue';
+import _ from 'lodash';
 
+const strict = ref(true);
 
-<script>
-import { ref, reactive, onMounted, computed } from 'vue';
-import TableComponent from './TableComponent.vue';
-import Datepicker from 'vuejs3-datepicker';
-import axios from 'axios';
+const flow = ref(['year', 'month', 'calendar']);
 
-export default {
-    extends: TableComponent,
-    components: {
-        Datepicker,
-    },
-    setup(props) {
-        const strict = ref(true);
-        const selectedFilters = reactive({});
-        const data = ref([]);
-        const loading = ref(false);
+const csvUrlSearch = ref('');
 
-        const csvUrlSearch = computed(() => {
-            if (props.tableTitle === 'Register') {
-                return (
-                    '/orders/csv/register' +
-                    props.currentPageParam +
-                    props.currentQueryString +
-                    props.currentRangeParam +
-                    props.currentOrderParam +
-                    props.currentLimitParam +
-                    filterParams()
-                );
-            } else {
-                return (
-                    '/reports/csv' +
-                    props.currentPageParam +
-                    props.currentQueryString +
-                    props.currentRangeParam +
-                    props.currentOrderParam +
-                    props.currentLimitParam +
-                    filterParams()
-                );
-            }
-        });
+const props = defineProps([
+    'dataUrl', 'columnClass', 'tableTitle', 'hasRange', 'generalQuery', 'redirectName',
+    'redirectId', 'filters', 'csvUrl', 'columnMap', 'deleteUrl',
+    'deleteId', 'checkboxVisible', 'heads'
+]);
 
-        const getData = () => {
-            loading.value = true;
-            console.log('get data started');
-            axios
-                .get(
-                    props.dataUrl +
-                    props.currentPageParam +
-                    props.currentQueryString +
-                    props.currentRangeParam +
-                    props.currentOrderParam +
-                    props.currentLimitParam +
-                    filterParams()
-                )
-                .then((response) => {
-                    console.log('get data success');
-                    data.value = response.data.data;
-                    loading.value = false;
+const {
+    data,
+    filter,
+    getData,
+    limit,
+    loading,
+    orderBy,
+    orderDirection,
+    pageSelection,
+    queryString,
+    range,
+    rangeOptions,
+    selectedFilters,
+    tableHeads
+} = useTable(props);
 
-                    let visible = data.value.map(function (item) {
-                        return item[Object.keys(item)[0]];
-                    });
-                })
-                .catch((error) => {
-                    console.log('get data fail');
-                    console.error(error);
-                });
-        };
-
-        const filterParams = () => {
-            let param = JSON.stringify(selectedFilters);
-            return `&f=${param}&strict=${strict.value}`;
-        };
-
-        onMounted(() => {
-            props.filters.forEach((filter) => {
-                if (filter.type === 'select') {
-                    selectedFilters[filter.value] = '';
-                }
-            });
-        });
-
-        return {
-            strict,
-            selectedFilters,
-            data,
-            loading,
-            csvUrlSearch,
-            getData,
-            filterParams,
-        };
-    },
-};
+const translate = (value) => {
+    if (typeof props.columnMap == 'undefined') {
+        return value;
+    } else {
+        if (typeof props.columnMap[value] != 'undefined') {
+            return props.columnMap[value];
+        }
+    }
+    return value;
+}
 </script>
-
-

@@ -343,7 +343,7 @@ class Order
         if (!$csv) {
             $data = $data->selectRaw("CONCAT('<b>',Prescription.Name, ' ', Prescription.Surname, '</b><br>',
             COALESCE(Prescription.DAddress1, ''), ' ', COALESCE(Prescription.DAddress2,''), ' ', COALESCE(Prescription.DAddress3, ''), ' ', COALESCE(Prescription.DAddress4, ''),
-            '<br>', COALESCE(Prescription.Postcode,''),', ' , c.Name) AS 'Patient Name/Address'")
+            '<br>', COALESCE(Prescription.Postcode,''),', ' , c.Name) AS 'address'")
                 ->leftJoin('Country AS c', 'c.CountryID', '=', 'Prescription.CountryCode');
         } else {
             $data = $data->selectRaw("
@@ -413,67 +413,69 @@ class Order
             $dateFilter = 'CreatedDate';
         }
 
-        foreach ($filters as $key => $value) {
-            if ($value != '') {
-                switch ($key) {
-                    case 'start_date':
-                        $date = new \DateTime($value);
-                        $date->setTime(00, 00, 00);
-                        $date = $date->getTimestamp();
+        if (!empty($filters)) {
+            foreach ($filters as $key => $value) {
+                if ($value != '') {
+                    switch ($key) {
+                        case 'start_date':
+                            $date = new \DateTime($value);
+                            $date->setTime(00, 00, 00);
+                            $date = $date->getTimestamp();
 
-                        $data = $data->where("Prescription.$dateFilter", '>', $date);
+                            $data = $data->where("Prescription.$dateFilter", '>', $date);
 
-                        break;
-                    case 'end_date':
-                        $date = new \DateTime($value);
-                        $date->setTime(23, 59, 59);
-                        $date = $date->getTimestamp();
+                            break;
+                        case 'end_date':
+                            $date = new \DateTime($value);
+                            $date->setTime(23, 59, 59);
+                            $date = $date->getTimestamp();
 
-                        $data = $data->where("Prescription.$dateFilter", '<', $date);
+                            $data = $data->where("Prescription.$dateFilter", '<', $date);
 
-                        break;
-                    case 'order_id':
-                        if (preg_match('#^[1-9][0-9]*(,[1-9][0-9]+)*$#', preg_replace('/\s+/', '', $value))) {
-                            $valueArray = explode(',', preg_replace('/\s+/', '', $value));
-                            $data = $data->whereIn('Prescription.PrescriptionID', $valueArray);
-                        } else {
-                            $data = $data->where('Prescription.PrescriptionID', $operator, $strict ? $value : "%$value%");
-                        }
-                        break;
-                    case 'country':
-                        $data = $data->where('Prescription.CountryCode', '=', $value);
-                        break;
-                    case 'status':
-                        $data = $data->where('Prescription.Status', '=', $value);
-                        break;
-                    case 'delivery':
-                        $data = $data->where('Prescription.DeliveryID', '=', $value);
-                        break;
-                    case 'doctor':
-                        $data = $data->where('Prescription.DoctorID', '=', $value);
-                        break;
-                    case 'reference':
-                        if (preg_match('#^[1-9][0-9]*(,[1-9][0-9]+)*$#', preg_replace('/\s+/', '', $value))) {
-                            $valueArray = explode(',', preg_replace('/\s+/', '', $value));
-                            $data = $data->whereIn('Prescription.ReferenceNumber', $valueArray);
-                        } else {
-                            $data = $data->where('Prescription.ReferenceNumber', $operator, $strict ? $value : "%$value%");
-                        }
-                        break;
-                    case 'name':
-                        $data = $data->where('Prescription.Name', $operator, $strict ? $value : "%$value%");
-                        break;
-                    case 'surname':
-                        $data = $data->where('Prescription.Surname', $operator, $strict ? $value : "%$value%");
-                        break;
-                    case 'client':
-                        $data = $data->where('Prescription.ClientID', '=', $value);
-                        break;
-                    case 'product':
-                        $data = $data->whereRaw("Prescription.PrescriptionID IN (SELECT PrescriptionID FROM Product WHERE Product.Code = $value)");
-                        break;
-                    default:
-                        break;
+                            break;
+                        case 'order_id':
+                            if (preg_match('#^[1-9][0-9]*(,[1-9][0-9]+)*$#', preg_replace('/\s+/', '', $value))) {
+                                $valueArray = explode(',', preg_replace('/\s+/', '', $value));
+                                $data = $data->whereIn('Prescription.PrescriptionID', $valueArray);
+                            } else {
+                                $data = $data->where('Prescription.PrescriptionID', $operator, $strict ? $value : "%$value%");
+                            }
+                            break;
+                        case 'country':
+                            $data = $data->where('Prescription.CountryCode', '=', $value);
+                            break;
+                        case 'status':
+                            $data = $data->where('Prescription.Status', '=', $value);
+                            break;
+                        case 'delivery':
+                            $data = $data->where('Prescription.DeliveryID', '=', $value);
+                            break;
+                        case 'doctor':
+                            $data = $data->where('Prescription.DoctorID', '=', $value);
+                            break;
+                        case 'reference':
+                            if (preg_match('#^[1-9][0-9]*(,[1-9][0-9]+)*$#', preg_replace('/\s+/', '', $value))) {
+                                $valueArray = explode(',', preg_replace('/\s+/', '', $value));
+                                $data = $data->whereIn('Prescription.ReferenceNumber', $valueArray);
+                            } else {
+                                $data = $data->where('Prescription.ReferenceNumber', $operator, $strict ? $value : "%$value%");
+                            }
+                            break;
+                        case 'name':
+                            $data = $data->where('Prescription.Name', $operator, $strict ? $value : "%$value%");
+                            break;
+                        case 'surname':
+                            $data = $data->where('Prescription.Surname', $operator, $strict ? $value : "%$value%");
+                            break;
+                        case 'client':
+                            $data = $data->where('Prescription.ClientID', '=', $value);
+                            break;
+                        case 'product':
+                            $data = $data->whereRaw("Prescription.PrescriptionID IN (SELECT PrescriptionID FROM Product WHERE Product.Code = $value)");
+                            break;
+                        default:
+                            break;
+                    }
                 }
             }
         }

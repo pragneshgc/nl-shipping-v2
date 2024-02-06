@@ -8,7 +8,7 @@ import VueSweetalert2 from 'vue-sweetalert2';
 import 'sweetalert2/dist/sweetalert2.min.css';
 
 import Toasted from "@hoppscotch/vue-toasted"
-import "@hoppscotch/vue-toasted/style.css"
+import "@hoppscotch/vue-toasted/style.css";
 
 const app = createApp(App);
 app.use(router);
