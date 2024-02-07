@@ -20,7 +20,6 @@
 import { ref, onMounted } from 'vue';
 import axios from 'axios';
 import TableComponentSearch from '../components/TableComponentSearch.vue';
-import { orderStatuses } from '../mixins/constants/orderStatuses';
 
 export default {
     components: {

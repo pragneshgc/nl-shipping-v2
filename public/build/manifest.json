@@ -14,7 +14,7 @@
       "resources/js/pages/NotFound.vue",
       "resources/js/pages/NotAllowed.vue"
     ],
-    "file": "assets/app-4enESHji.js",
+    "file": "assets/app-mIK5RKsM.js",
     "isEntry": true,
     "src": "resources/js/app.js"
   },
@@ -23,25 +23,23 @@
     "src": "resources/js/images/iconPaper.png"
   },
   "resources/js/pages/ImportTracking.vue": {
-    "file": "assets/ImportTracking-T3mmL2Qf.js",
+    "file": "assets/ImportTracking-0CFqyYVh.js",
     "imports": [
-      "__plugin-vue_export-helper-x3n3nnut.js",
       "resources/js/app.js"
     ],
     "isDynamicEntry": true,
     "src": "resources/js/pages/ImportTracking.vue"
   },
   "resources/js/pages/Info.vue": {
-    "file": "assets/Info-DO1pcOF6.js",
+    "file": "assets/Info-VFgLxAaq.js",
     "imports": [
-      "__plugin-vue_export-helper-x3n3nnut.js",
       "resources/js/app.js"
     ],
     "isDynamicEntry": true,
     "src": "resources/js/pages/Info.vue"
   },
   "resources/js/pages/NotAllowed.vue": {
-    "file": "assets/NotAllowed-eUX_mLQj.js",
+    "file": "assets/NotAllowed-B_cxUCXv.js",
     "imports": [
       "__plugin-vue_export-helper-x3n3nnut.js",
       "resources/js/app.js"
@@ -50,7 +48,7 @@
     "src": "resources/js/pages/NotAllowed.vue"
   },
   "resources/js/pages/NotFound.vue": {
-    "file": "assets/NotFound-hUhhpR5e.js",
+    "file": "assets/NotFound-prlbjEDY.js",
     "imports": [
       "__plugin-vue_export-helper-x3n3nnut.js",
       "resources/js/app.js"
@@ -62,7 +60,7 @@
     "assets": [
       "assets/iconPaper-Jsyd6hjU.png"
     ],
-    "file": "assets/Order-42TbMjK_.js",
+    "file": "assets/Order-EhTlE7lS.js",
     "imports": [
       "resources/js/app.js"
     ],
@@ -70,7 +68,7 @@
     "src": "resources/js/pages/Order.vue"
   },
   "resources/js/pages/Reports.vue": {
-    "file": "assets/Reports-P4P8xVMi.js",
+    "file": "assets/Reports-_arleWQD.js",
     "imports": [
       "resources/js/app.js",
       "__plugin-vue_export-helper-x3n3nnut.js"

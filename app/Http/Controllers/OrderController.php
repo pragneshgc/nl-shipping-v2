@@ -374,6 +374,13 @@ class OrderController extends Controller
     public function importTracking(Request $request)
     {
         $file = File::get($request->file('file')); //->store('files');
+
+        echo "<pre>";
+        print_r($request->all());
+        print_r($file);
+        echo "</pre>";
+        exit;
+
         $file = str_replace(' ', '', $file);
         $file = str_replace('"', '', $file);
         $companyID = $request->option;
