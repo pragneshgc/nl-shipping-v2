@@ -291,7 +291,7 @@ export default {
             getData();
         };
 
-        const redirect = (id) => {
+        const redirect = (id) => {            
             if (props.redirectName && props.redirectId) {
                 props.$router.push({ name: props.redirectName, params: { id } });
             }

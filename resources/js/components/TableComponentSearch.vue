@@ -62,16 +62,11 @@
 
             <!-- Card Content -->
             <div class="card-body">
-                <table style="table-layout: auto" v-show="data.data.length >= 1" class="table table-hover">
+                <table style="table-layout: auto" v-show="data.data.length >= 1" class="table table-hover" id="mytable">
                     <!-- Table head -->
                     <thead class="primary-color text-white">
                         <tr>
-                            <th v-if="checkboxVisible" style="
-                  width: 40px;
-                  font-weight: 400;
-                  padding: 16px 8px;
-                  vertical-align: top;
-                "></th>
+                            <th v-if="checkboxVisible" style="width: 40px;font-weight: 400;padding: 16px 8px;vertical-align: top;"></th>
                             <th class="clickable" v-for="(value, key) in tableHeads" v-on:click="setOrder(key)">
                                 {{ value }}
 
@@ -166,10 +161,17 @@
     </div>
 </template>
 <script setup>
+import {useRouter} from 'vue-router'    
 import VsDatepicker from '@vuesimple/vs-datepicker';
 import { useTable } from '../composables/useTable';
 import { ref } from 'vue';
+import { printUrl, printHtml, printFile, printLabel, printPage, printChart, printImages, printHTML } from '../mixins/print';
+import { exportPDF } from '../mixins/pdf';
+import { reportError, postError, postErrorPopup, postSuccess, reportErrorToast } from '../mixins/errors';
+import { exportCSV, arrayToCSV } from '../mixins/csv';
 import _ from 'lodash';
+
+const router = useRouter();
 
 const strict = ref(true);
 
@@ -198,6 +200,26 @@ const {
     selectedFilters,
     tableHeads
 } = useTable(props);
+
+const changePage = (page) => {
+    if (page === data.value.current_page) return;
+    data.value.current_page = page;
+    console.log('changepage');
+    getData();
+};
+
+const setOrder = (key) => {
+    console.log('setOrder');
+    orderDirection.value = orderDirection.value === '' ? 'DESC' : (orderDirection.value === 'DESC' ? 'ASC' : '');
+    orderBy.value = (orderDirection.value === '' ? '' : key);
+    getData();
+};
+
+const redirect = (id) => {            
+    if (props.redirectName && props.redirectId) {
+        router.push({ name: props.redirectName, params: { id } });
+    }
+};
 
 const translate = (value) => {
     if (typeof props.columnMap == 'undefined') {

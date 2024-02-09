@@ -1,21 +1,28 @@
+import { ref } from 'vue';
+import axios from 'axios';
+
 export default {
-    methods: {
-        redirectToPrescription(prescriptionID){
-            var Ckey = 0;
+  setup() {
+    const redirectToPrescription = (prescriptionID) => {
+      let Ckey = ref(0);
 
-            axios.get('/esa_login_status')
-            .then((response) => {
-                Ckey = response.data.data;
-                
-                if(Ckey != 0){
-                    document.cookie = "TARCH="+Ckey+"; domain=esasys.co.uk; max-age=31536000;";
-                }
+      axios.get('/esa_login_status')
+        .then((response) => {
+          Ckey.value = response.data.data;
 
-                window.open('https://www.esasys.co.uk/?showPrescription&PRESCRIPTIONID='+prescriptionID, '_blank');
-            })
-            .catch((error) => {
-                Ckey = 0;
-            });
-        },        
-    }
-}
+          if (Ckey.value !== 0) {
+            document.cookie = `TARCH=${Ckey.value}; domain=esasys.co.uk; max-age=31536000;`;
+          }
+
+          window.open(`https://www.esasys.co.uk/?showPrescription&PRESCRIPTIONID=${prescriptionID}`, '_blank');
+        })
+        .catch((error) => {
+          Ckey.value = 0;
+        });
+    };
+
+    return {
+      redirectToPrescription
+    };
+  }
+};

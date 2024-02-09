@@ -1,6 +1,6 @@
 const exportCSV = (data, title) => {
     let csvContent = "data:text/csv;charset=utf-8,\uFEFF";
-    csvContent += this.arrayToCSV(data);
+    csvContent += arrayToCSV(data);
     var encodedUri = encodeURI(csvContent);
     // this seems a bit hacky, try doing something else
     var link = document.createElement("a");
