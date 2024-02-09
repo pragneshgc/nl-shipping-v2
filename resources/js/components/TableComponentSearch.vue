@@ -7,21 +7,25 @@
         <div class="card">
             <div>
                 <div class="row search-boxes">
-                    <div v-for="(filter, index) in filters" :key="index" class="filter-inputs">
-                        <!-- {{ filter.title }} -->
+                    <div v-for="(filter, index) in filters" :key="index" class="filter-inputs">                        
+                        
+                        &nbsp;&nbsp; 
                         <input v-model="selectedFilters[filter.value]" v-if="filter.type == 'text'"
                             class="form-control tBoxSize02" :placeholder="filter.title" />
+
                         <template v-else-if="filter.type == 'date'">
                             <VsDatepicker :placeholder="filter.title" :name="filter.value" label=""
                                 v-model="selectedFilters[filter.value]" maxlength="30" format="DD MMM YYYY">
                             </VsDatepicker>
                         </template>
+
                         <select class="table-dropdown" v-else-if="filter.type == 'select'" :name="filter.value"
                             v-model="selectedFilters[filter.value]">
                             <option v-for="(option, index) in filter.options" :key="index" :value="option.value">
                                 {{ option.title }}
                             </option>
                         </select>
+
                         <input v-model="selectedFilters[filter.value]" v-else class="form-control tBoxSize02"
                             :placeholder="filter.title" />
                     </div>
@@ -29,7 +33,7 @@
                 <div class="row filters-row">
                     <div>
                         <input name="strict" type="checkbox" :checked="strict" />
-                        <label for="strict" @click="strict = !strict">Exact match</label>
+                        <label for="strict" @click="strict = !strict"> Exact match</label>
                     </div>
                     <button :disabled="loading" class="btn btnSize02 tertiaryBtn" @click="getData()">
                         Search

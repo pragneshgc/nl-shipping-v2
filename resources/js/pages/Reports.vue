@@ -8,7 +8,7 @@
                 <div class="orderSearch">
                     <TableComponentSearch :data-url="'/orders/search'" column-class="col-lg-12"
                         table-title="Activity Reports" redirect-name="order" redirect-id="PrescriptionID" :filters="filters"
-                        :heads="{ 'PrescriptionID': 'id', 'ReferenceNumber': 'ref', 'Date': 'Date', 'address': 'Patient Name/Address', 'User': 'user' }"
+                        :heads="{ 'PrescriptionID': 'Id', 'ReferenceNumber': 'Ref', 'Date': 'Date', 'address': 'Patient Name/Address', 'User': 'User' }"
                         :column-map="columnMap" />
                 </div>
             </div>
