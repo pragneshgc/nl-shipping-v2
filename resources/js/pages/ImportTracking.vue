@@ -11,7 +11,7 @@
                 </select>
 
                 <div v-show="option != ''" class="input-container mt-20">
-                    <input type="file" name="tracking" id="file" ref="file" @change="attachFile($event)" />
+                    <input type="file" name="tracking" id="file" @change="attachFile" />
                     <div class="input-mask" @click="inputClick">
                         <button class="browse-btn">
                             {{ buttonText }}
@@ -67,20 +67,21 @@ const inputClick = () => {
 }
 
 const attachFile = ($event) => {
-    let target = $event.target;
-
-    if (target && target.files) {
-        file.value = target.files[0];
-        fileName.value = target.files[0].name;
-    }
+    file.value = $event.target.files[0];
+    fileName.value = $event.target.files[0].name;
 };
 const upload = () => {
     importing.value = true;
     let formData = new FormData();
-    formData.append('file', file.value.files);
+    formData.append('file', file.value);
     formData.append('option', option.value);
 
-    axios.post('/import-tracking', formData, { headers: { 'Content-type': 'multipart/form-data' } })
+    const config = {
+        headers: {
+            'content-type': 'multipart/form-data'
+        }
+    }
+    axios.post('/import-tracking', formData, config)
         .then((response) => {
             trackingStatuses.value = response.data.data;
             postSuccess('Import tracking uploaded');
