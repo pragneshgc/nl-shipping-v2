@@ -223,6 +223,7 @@ import orderStatuses from '../constants/orderStatuses';
 import deliveryLogo from '../constants/deliveryLogo';
 import { iconPaper } from '../mixins/images';
 import EditOrderAddress from './EditOrderAddress.vue';
+import deliveryService from '../constants/deliveryService';
 
 const route = useRoute();
 const orderID = ref(route.params.id);
@@ -245,13 +246,13 @@ onMounted(() => {
 
 const apiEndpoint = computed(() => {
     if (orderDetails.value != null) {
-        if (orderDetails.value.DeliveryID == '10') {
+        if (orderDetails.value.DeliveryID == deliveryService['DHL']) {
             return '/shipment-validation/' + orderDetails.value.PrescriptionID;
-        } else if (orderDetails.value.DeliveryID == '7') {
+        } else if (orderDetails.value.DeliveryID == deliveryService['UPS']) {
             return '/api/ups/shipment-validation/' + orderDetails.value.PrescriptionID;
-        } else if (orderDetails.value.DeliveryID == '4') {
+        } else if (orderDetails.value.DeliveryID == deliveryService['DPD']) {
             return '/api/dpd/shipment-validation/' + orderDetails.value.PrescriptionID;
-        } else if (orderDetails.value.DeliveryID == '5') {
+        } else if (orderDetails.value.DeliveryID == deliveryService['RML']) {
             return `/api/rmail/shipment-validation/${orderDetails.value.PrescriptionID}`;
         } else {
             return false;

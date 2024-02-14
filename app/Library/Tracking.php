@@ -3,8 +3,10 @@
 namespace App\Library;
 
 use GuzzleHttp;
+use SimpleXMLElement;
 use App\Library\Order;
 use App\Library\Client;
+use App\Helpers\Generic;
 use App\Library\Setting;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Log;
@@ -48,30 +50,38 @@ class Tracking
             return false;
         }
 
-        $xml = simplexml_load_file('xml_return/general.xml');
+        $tracking = [
+            'DeliveryCompany' => $setting->Name,
+            'TrackingLink' => $setting->Value,
+            'TrackingCode' => $order->TrackingCode,
+            'RefID' => $order->ReferenceNumber,
+            'TrackingRef' => $order->ReferenceNumber . '-' . $order->PrescriptionID,
+            'Username' => $client->ReturnUsername,
+            'Password' => $client->ReturnPassword,
+        ];
+        $contentType = 'text/xml; charset=UTF8';
+        $fileType = '.xml';
 
-        $xml->DeliveryCompany = $setting->Name;
-        $xml->TrackingLink = $setting->Value;
-        $xml->TrackingCode = $order->TrackingCode;
-        $xml->RefID = $order->ReferenceNumber;
-        // $xml->OrderId = $order->GUID;//this is a patch for EveAdam
-        $xml->TrackingRef = $order->ReferenceNumber . '-' . $order->PrescriptionID;
-        $xml->Username = $client->ReturnUsername;
-        $xml->Password = $client->ReturnPassword;
-
-        $body = $xml->asXML();
+        $allow_json_tracking = explode(',', config('esa.allow_json_tracking_to_client'));
+        if (in_array($order->ClientID, $allow_json_tracking)) {
+            $contentType = 'application/json';
+            $body = json_encode($tracking);
+            $fileType = '.json';
+        } else {
+            $body = Generic::arrayToXml($tracking, new SimpleXMLElement('<ESATracking/>'));
+        }
 
         $options = [
             'headers' => [
-                'Content-Type' => 'text/xml; charset=UTF8',
+                'Content-Type' => $contentType,
             ],
             'body' => $body, //send it via body as xml
         ];
 
         if (isAzureStorageEnabled()) {
-            Storage::disk('azure')->put('ups_xml/tracking-code-send-' . $id . '.xml', $body);
+            Storage::disk('azure')->put('ups_xml/tracking-code-send-' . $id . $fileType, $body);
         } else {
-            Storage::put('ups_xml/tracking-code-send-' . $id . '.xml', $body);
+            Storage::put('ups_xml/tracking-code-send-' . $id . $fileType, $body);
         }
 
         if (App::environment('local') || empty($client->ReturnURL)) {
