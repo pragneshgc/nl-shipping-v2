@@ -36,7 +36,7 @@ export function useTable(props) {
       currentFilterParam.value)
       .then((response) => {
         data.value = response.data.data;
-        console.log('columns', setColumns());
+        setColumns();
         loading.value = false;
       })
       .catch((error) => {
@@ -83,10 +83,30 @@ export function useTable(props) {
     getData();
   }, 500));
   watch(range, () => {
-    console.log('range watch', range, range.value);
     getData();
   }, { immediate: true });
   watch(limit, () => getData());
+  watch(props.generalQuery, () => {
+    queryString.value = props.generalQuery;
+  });
+  watch(props.filters, () => {
+    data.value.current_page = 1;
+    getData();
+  });
+  watch(
+    () => route.query,
+    () => {
+      if (typeof route.query.q != 'undefined') {
+        queryString.value = route.query.q;
+      } else {
+        queryString.value = '';
+      }
+      if (typeof route.query.p != 'undefined') {
+        this.data.current_page = route.query.p;
+        getData(); // this was called twice once from here once from the button change
+      }
+    }
+  )
 
   /* const checked = () => {
     return this.$store.state.checked;
